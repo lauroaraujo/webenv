@@ -26,9 +26,10 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: Install yarn globaly
       run: npm install -g yarn
-    - name: yarn install, test
+    - name: yarn install, lint, test
       run: |
         yarn install
+        yarn lint
         yarn test:ci
       env:
         CI: true
