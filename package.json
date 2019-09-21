@@ -1,0 +1,12 @@
+{
+  "name": "webenv",
+  "version": "0.0.1",
+  "description": "Generate a JS module from env variables to use on your web frontend app",
+  "main": "index.js",
+  "repository": "git@github.com:lauroaraujo/webenv.git",
+  "author": "Lauro Araujo <lauro.araujo@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo Success"
+  }
+}
