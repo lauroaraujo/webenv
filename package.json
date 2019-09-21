@@ -8,9 +8,15 @@
   "license": "MIT",
   "scripts": {
     "test": "jest --watch",
-    "test:ci": "jest --coverage"
+    "test:ci": "jest --coverage",
+    "lint": "standard",
+    "lint:fix": "standard --fix"
+  },
+  "standard": {
+    "env": [ "node", "jest" ]
   },
   "devDependencies": {
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "standard": "^14.3.1"
   }
 }
