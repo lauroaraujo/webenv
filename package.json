@@ -13,9 +13,13 @@
     "lint:fix": "standard --fix"
   },
   "standard": {
-    "env": [ "node", "jest" ]
+    "env": [
+      "node",
+      "jest"
+    ]
   },
   "devDependencies": {
+    "@types/jest": "^24.0.18",
     "jest": "^24.9.0",
     "standard": "^14.3.1"
   }
