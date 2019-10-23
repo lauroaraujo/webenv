@@ -1,11 +1,18 @@
-const webenv = require('./transform-json')
+const parse = require('./parse')
 
-describe('ENV variable transformer', () => {
-  it('Transforms env object into a JSON string', () => {
-    const env = { API_NAME: 'my-app-test' }
-    const result = webenv(env)
+describe('ENV Parser', () => {
+  it('Returns all env variables if no config is provided', () => {
+    const env = {
+      ENV_VAR: 'environment_variable',
+      env: 'lowercase_var',
+      valWithSpace: 'value with space',
+      '.unsusual key': 'value',
+      number: '123'
+    }
 
-    expect(result).toBe('{"API_NAME":"my-app-test"}')
+    const parsedEnv = parse(env)
+    expect(parsedEnv).not.toBe(env)
+    expect(parsedEnv).toEqual(env)
   })
 
   it('Ignores variables not present in config file', () => {
@@ -18,7 +25,7 @@ describe('ENV variable transformer', () => {
       LICENSE_KEY: {}
     }
 
-    expect(webenv(env, config)).toBe('{"LICENSE_KEY":"abc1234"}')
+    expect(parse(env, config)).toEqual({ LICENSE_KEY: 'abc1234' })
   })
 
   it('Ignores variables not present in config file', () => {
@@ -31,7 +38,7 @@ describe('ENV variable transformer', () => {
       APP_PORT: {}
     }
 
-    expect(webenv(env, config)).toBe('{"APP_PORT":"1234"}')
+    expect(parse(env, config)).toEqual({ APP_PORT: '1234' })
   })
 
   it('Handles multiple variables correctly', () => {
@@ -51,6 +58,6 @@ describe('ENV variable transformer', () => {
       }
     }
 
-    expect(webenv(env, config)).toBe('{"API_NAME":"api-name","APP_PORT":"5678"}')
+    expect(parse(env, config)).toEqual({ API_NAME: 'api-name', APP_PORT: '5678' })
   })
 })
