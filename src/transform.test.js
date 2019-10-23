@@ -1,51 +1,33 @@
-const webenv = require('./transform')
+const {
+  transformToWindow, transformToJson, transformToES6Module, transformToCommonJSModule
+} = require('./transform')
 
-describe('ENV variable transformer', () => {
-  it('Transforms env object into a JS module', () => {
-    const env = { API_NAME: 'my-app-test' }
-    const result = webenv(env)
+describe(' ENV variable transformer', () => {
+  it('Transforms env object into script that saves to window', () => {
+    const env = { API_NAME: 'my-app-test', '.unsusual key': 'value' }
+    const result = transformToWindow(env)
 
-    const expected = 'module.exports.API_NAME = \'my-app-test\''
-
-    expect(result).toBe(expected)
+    expect(result).toBe('window.__webenv_vars={"API_NAME":"my-app-test",".unsusual key":"value"}')
   })
 
-  it('Ignores variables not present in config file', () => {
-    const env = {
-      APP_PORT: '1234',
-      ENV: 'development'
-    }
+  it('Transforms env object into a json string', () => {
+    const env = { API_NAME: 'my-app-test', '.unsusual key': 'value' }
+    const result = transformToJson(env)
 
-    const config = {
-      APP_PORT: {}
-    }
-
-    const expected = 'module.exports.APP_PORT = \'1234\''
-    expect(webenv(env, config)).toBe(expected)
+    expect(result).toBe('{"API_NAME":"my-app-test",".unsusual key":"value"}')
   })
 
-  it('Handles multiple variables correctly', () => {
-    const env = {
-      CI_USELESS_VAR: 'abc123',
-      API_NAME: 'api-name',
-      APP_PORT: '5678',
-      ENV: 'development'
-    }
+  it('Transforms env object into an ES6 module', () => {
+    const env = { API_NAME: 'my-app-test', '.unsusual key': 'value' }
+    const result = transformToES6Module(env)
 
-    const config = {
-      API_NAME: {
-        required: true
-      },
-      APP_PORT: {
-        required: false
-      }
-    }
+    expect(result).toBe('export default {"API_NAME":"my-app-test",".unsusual key":"value"}')
+  })
 
-    const expected = `
-module.exports.API_NAME = 'api-name'
-module.exports.APP_PORT = '5678'
-    `.trim()
+  it('Transforms env object into a Common JS module', () => {
+    const env = { API_NAME: 'my-app-test', '.unsusual key': 'value' }
+    const result = transformToCommonJSModule(env)
 
-    expect(webenv(env, config)).toBe(expected)
+    expect(result).toBe('module.exports={"API_NAME":"my-app-test",".unsusual key":"value"}')
   })
 })
