@@ -1,13 +1,24 @@
-const webenv = require('./transform')
+const webenv = require('./transform-json')
 
 describe('ENV variable transformer', () => {
-  it('Transforms env object into a JS module', () => {
+  it('Transforms env object into a JSON string', () => {
     const env = { API_NAME: 'my-app-test' }
     const result = webenv(env)
 
-    const expected = 'module.exports.API_NAME = \'my-app-test\''
+    expect(result).toBe('{"API_NAME":"my-app-test"}')
+  })
 
-    expect(result).toBe(expected)
+  it('Ignores variables not present in config file', () => {
+    const env = {
+      LICENSE_KEY: 'abc1234',
+      ENV: 'development'
+    }
+
+    const config = {
+      LICENSE_KEY: {}
+    }
+
+    expect(webenv(env, config)).toBe('{"LICENSE_KEY":"abc1234"}')
   })
 
   it('Ignores variables not present in config file', () => {
@@ -20,8 +31,7 @@ describe('ENV variable transformer', () => {
       APP_PORT: {}
     }
 
-    const expected = 'module.exports.APP_PORT = \'1234\''
-    expect(webenv(env, config)).toBe(expected)
+    expect(webenv(env, config)).toBe('{"APP_PORT":"1234"}')
   })
 
   it('Handles multiple variables correctly', () => {
@@ -41,11 +51,6 @@ describe('ENV variable transformer', () => {
       }
     }
 
-    const expected = `
-module.exports.API_NAME = 'api-name'
-module.exports.APP_PORT = '5678'
-    `.trim()
-
-    expect(webenv(env, config)).toBe(expected)
+    expect(webenv(env, config)).toBe('{"API_NAME":"api-name","APP_PORT":"5678"}')
   })
 })
